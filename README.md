@@ -1,4 +1,4 @@
-# Project Name: UnderOcean
+UnderOcean
 
 ## Introduction
 UnderOcean is a Unity game project developed by a team of four students from FECAP (Fundação Escola de Comércio Álvares Penteado). The game aims to raise awareness about the importance of preserving marine life, aligned with the Sustainable Development Goal (SDG) 14: Life Below Water.
