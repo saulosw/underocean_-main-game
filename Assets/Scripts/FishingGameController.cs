@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class FishingGameController : MonoBehaviour
@@ -13,6 +14,8 @@ public class FishingGameController : MonoBehaviour
     public GameObject lixo;
     public TextMeshProUGUI pointsText;
     public Image movingImage;
+
+    public float moveSpeedBar = 50f;
     public float moveSpeed = 50f;
     public float moveDistance = 100f;
     public float moveInterval = 2f;
@@ -26,21 +29,22 @@ public class FishingGameController : MonoBehaviour
 
     private bool isCatching = false;
 
+    public AudioSource audioSource;
+    public AudioClip catchSound;
+
     void Start()
     {
-        ToggleFishingGame(false); // Inicia o jogo de pesca desativado
+        ToggleFishingGame(false);
         StartCoroutine(MoveImageRoutine());
     }
 
     void Update()
     {
-        // Verifica se o jogador pressionou a tecla "E"
         if (Input.GetKeyDown(KeyCode.E))
         {
-            ToggleFishingGame(!isCatching); // Alterna o estado do jogo de pesca
+            ToggleFishingGame(!isCatching);
         }
 
-        // Verifica se o jogador está movendo a barra
         if (isCatching)
         {
             if (Input.GetKey(KeyCode.K))
@@ -54,24 +58,21 @@ public class FishingGameController : MonoBehaviour
 
             if (RectTransformUtility.RectangleContainsScreenPoint(fishArea, fishingBar.position))
             {
-                currentCatchTime += Time.deltaTime; // Incrementa o tempo de captura
+                currentCatchTime += Time.deltaTime;
                 if (currentCatchTime >= moveInterval)
                 {
-                    // Lógica de captura de peixe
                     Debug.Log("Fish Caught!");
                     AddPoint();
-                    currentCatchTime = 0f; // Reseta o tempo de captura
+                    currentCatchTime = 0f;
                 }
             }
             else
             {
-                // Resetar o tempo de captura se a barra não estiver cobrindo a área do peixe
                 currentCatchTime = 0f;
             }
         }
     }
 
-    // Método para ativar ou desativar o jogo de pesca
     public void ToggleFishingGame(bool activate)
     {
         isCatching = activate;
@@ -95,6 +96,20 @@ public class FishingGameController : MonoBehaviour
         points++;
         pointsText.text = points.ToString();
         UpdateWaterColor();
+        PlayCatchSound();
+
+        if (points >= 30)
+        {
+            LoadNextScene();
+        }
+    }
+
+    void PlayCatchSound()
+    {
+        if (audioSource != null && catchSound != null)
+        {
+            audioSource.PlayOneShot(catchSound);
+        }
     }
 
     void UpdateWaterColor()
@@ -106,14 +121,12 @@ public class FishingGameController : MonoBehaviour
 
     void MoveBarUp()
     {
-        // Mover a barra para cima
-        fishingBar.anchoredPosition += Vector2.up * moveSpeed * Time.deltaTime;
+        fishingBar.anchoredPosition += Vector2.up * moveSpeedBar * Time.deltaTime;
     }
 
     void MoveBarDown()
     {
-        // Mover a barra para baixo
-        fishingBar.anchoredPosition -= Vector2.up * moveSpeed * Time.deltaTime;
+        fishingBar.anchoredPosition -= Vector2.up * moveSpeedBar * Time.deltaTime;
     }
 
     IEnumerator MoveImageRoutine()
@@ -134,5 +147,10 @@ public class FishingGameController : MonoBehaviour
 
             yield return new WaitForSeconds(moveIntervalVerdadeiro);
         }
+    }
+
+    void LoadNextScene()
+    {
+        SceneManager.LoadScene("Win");
     }
 }
