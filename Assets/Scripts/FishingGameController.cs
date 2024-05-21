@@ -98,7 +98,7 @@ public class FishingGameController : MonoBehaviour
         UpdateWaterColor();
         PlayCatchSound();
 
-        if (points >= 30)
+        if (points >= 25)
         {
             LoadNextScene();
         }
